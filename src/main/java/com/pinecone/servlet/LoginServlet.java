@@ -1,4 +1,4 @@
-package com.pinecone;
+package com.pinecone.servlet;
 
 import java.io.IOException;
 import java.util.Date;
@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.pinecone.logic.AuthenticationLogic;
+import com.pinecone.logic.AuthLogic;
+import com.pinecone.logic.AuthLogicFactory;
 
 @WebServlet(urlPatterns = { "/login" })
 public class LoginServlet extends HttpServlet {
@@ -23,18 +24,22 @@ public class LoginServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    log.info("get request for " + request.getRequestURI());
-
-    AuthenticationLogic logic = new AuthenticationLogic(request);
+    AuthLogic logic = AuthLogicFactory.get(request);
 
     if (logic.isLoggedIn()) {
-      response.sendRedirect("/main");
-      return;
-    }
 
-    request.setAttribute("message", "login request");
-    request.setAttribute("timestamp", new Date().toString());
-    request.getRequestDispatcher(JspPage.MAIN).forward(request, response);
+      request.setAttribute("message", "logged in as '" + logic.getUserId()
+          + "'");
+      request.setAttribute("timestamp", new Date().toString());
+      request.getRequestDispatcher(JspPage.MAIN).forward(request, response);
+
+    } else {
+
+      String redirectLocation = logic.getRedirectUrl();
+      log.info("sending redirect: " + redirectLocation);
+      response.sendRedirect(redirectLocation);
+
+    }
 
   }
 

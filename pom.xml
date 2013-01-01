@@ -67,6 +67,11 @@
 			<artifactId>google-api-services-calendar</artifactId>
 			<version>v3-rev21-1.12.0-beta</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-oauth2</artifactId>
+			<version>v2-rev19-1.12.0-beta</version>
+		</dependency>
 
 		<!-- OAUTH 2.0 DEPENDENCIES -->
 		<dependency>

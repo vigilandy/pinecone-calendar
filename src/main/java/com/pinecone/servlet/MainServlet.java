@@ -1,7 +1,8 @@
-package com.pinecone;
+package com.pinecone.servlet;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+
+import com.pinecone.google.CalendarService;
+import com.pinecone.google.CalendarServiceImpl;
+import com.pinecone.logic.AuthLogic;
+import com.pinecone.logic.AuthLogicFactory;
+import com.pinecone.model.PineconeCalendar;
 
 @WebServlet(urlPatterns = { "/" })
 public class MainServlet extends HttpServlet {
@@ -21,20 +28,20 @@ public class MainServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    log.info("get request for " + request.getRequestURI());
+    AuthLogic logic = AuthLogicFactory.get(request);
+    if (logic.isLoggedIn()) {
+      try {
+        CalendarService service = new CalendarServiceImpl(logic.getCredential());
+        List<PineconeCalendar> calendars = service.getCalendars();
 
-    try {
-      // CalendarService service = new CalendarServiceImpl(
-      // Utils.getUserId(request));
-      // List<PineconeCalendar> calendars = new ArrayList<>();
-      // request.setAttribute("calendars", calendars);
-      // request.setAttribute("message", "request OK (dummy), " +
-      // calendars.size()
-      // + " calender(s) found");
-      request.setAttribute("message", "still testing...");
-    } catch (Exception e) {
-      log.error(e, e);
-      request.setAttribute("message", e.toString());
+        request.setAttribute("calendars", calendars);
+        request
+            .setAttribute("message", calendars.size() + " calender(s) found");
+
+      } catch (Exception e) {
+        log.error(e, e);
+        request.setAttribute("message", e.toString());
+      }
     }
 
     request.setAttribute("timestamp", new Date().toString());

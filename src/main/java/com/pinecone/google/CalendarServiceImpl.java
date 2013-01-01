@@ -1,9 +1,10 @@
-package com.pinecone;
+package com.pinecone.google;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
@@ -11,16 +12,14 @@ import com.pinecone.model.PineconeCalendar;
 
 public class CalendarServiceImpl implements CalendarService {
 
-  private static com.google.api.services.calendar.Calendar loadCalendarClient(
-      String userId) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
   private final com.google.api.services.calendar.Calendar client;
 
-  public CalendarServiceImpl(String userId) throws IOException {
-    client = loadCalendarClient(userId);
+  public CalendarServiceImpl(HttpRequestInitializer credential)
+      throws IOException {
+    client = new com.google.api.services.calendar.Calendar.Builder(
+        GoogleServiceUtil.HTTP_TRANSPORT, GoogleServiceUtil.JSON_FACTORY,
+        credential).setApplicationName(GoogleServiceUtil.APPLICATION_NAME)
+        .build();
   }
 
   @Override

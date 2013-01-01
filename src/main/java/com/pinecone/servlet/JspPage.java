@@ -1,4 +1,4 @@
-package com.pinecone;
+package com.pinecone.servlet;
 
 public class JspPage {
 

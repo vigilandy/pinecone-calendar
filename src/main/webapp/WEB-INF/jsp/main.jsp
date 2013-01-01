@@ -11,6 +11,7 @@
 	<div>
 		<a href="login">login</a>
 	</div>
+	<div>user: ${sessionScope.userId }</div>
 
 	<div id="message">${ message }</div>
 	<div id="timestamp">${ timestamp }</div>
