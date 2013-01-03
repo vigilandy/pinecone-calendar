@@ -29,7 +29,7 @@ public class OAuthCallbackServlet extends HttpServlet {
     AuthLogic logic = AuthLogicFactory.get(request);
     try {
       logic.handleCallback(response);
-      response.sendRedirect(request.getContextPath() + "/main");
+      response.sendRedirect(request.getContextPath());
     } catch (AuthenticationErrorException e) {
       log.error(e, e);
       response.sendRedirect(request.getContextPath() + "/loginerror");

@@ -1,18 +1,15 @@
 package com.pinecone.google;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.pinecone.model.PineconeCalendar;
-
 public interface CalendarService {
 
-  void delete(PineconeCalendar calendar) throws IOException;
+  void delete(String calendarId) throws GoogleServiceException;
 
-  List<PineconeCalendar> getCalendars() throws IOException;
+  /**
+   * get a json string of the list of owned calendars
+   */
+  String getOwnedCalendars() throws GoogleServiceException;
 
-  PineconeCalendar insert(PineconeCalendar calendar) throws IOException;
-
-  PineconeCalendar update(PineconeCalendar updated) throws IOException;
+  // String insert(String calendar) throws IOException;
+  // String update(String updated) throws IOException;
 
 }

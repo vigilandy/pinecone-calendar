@@ -1,4 +1,4 @@
-package com.pinecone.servlet;
+package com.pinecone.servlet.filter;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -17,6 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+/**
+ * logs request url and when trace log is enabled, logs attributes and
+ * parameters in the request
+ */
 @WebFilter("/*")
 public class LoggingFilter implements Filter {
 
@@ -27,7 +31,6 @@ public class LoggingFilter implements Filter {
    */
   @Override
   public void destroy() {
-
   }
 
   /**
@@ -54,7 +57,6 @@ public class LoggingFilter implements Filter {
           log.debug(String.format("\tparameter %s=%s", entry.getKey(), value));
         }
       }
-
     }
 
     // pass the request along the filter chain
@@ -66,7 +68,6 @@ public class LoggingFilter implements Filter {
    */
   @Override
   public void init(FilterConfig fConfig) throws ServletException {
-
   }
 
 }

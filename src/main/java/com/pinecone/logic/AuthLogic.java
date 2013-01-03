@@ -12,11 +12,13 @@ public interface AuthLogic {
 
   String getRedirectUrl();
 
+  String getUserId();
+
   void handleCallback(HttpServletResponse response)
       throws AuthenticationErrorException;
 
   boolean isLoggedIn();
 
-  String getUserId();
+  void logout();
 
 }

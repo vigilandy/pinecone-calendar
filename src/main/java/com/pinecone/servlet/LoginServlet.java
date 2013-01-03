@@ -1,7 +1,6 @@
 package com.pinecone.servlet;
 
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import com.pinecone.constant.RequestAttribute;
 import com.pinecone.logic.AuthLogic;
 import com.pinecone.logic.AuthLogicFactory;
 
@@ -28,9 +28,8 @@ public class LoginServlet extends HttpServlet {
 
     if (logic.isLoggedIn()) {
 
-      request.setAttribute("message", "logged in as '" + logic.getUserId()
-          + "'");
-      request.setAttribute("timestamp", new Date().toString());
+      request.setAttribute(RequestAttribute.MESSAGE,
+          "logged in as '" + logic.getUserId() + "'");
       request.getRequestDispatcher(JspPage.MAIN).forward(request, response);
 
     } else {

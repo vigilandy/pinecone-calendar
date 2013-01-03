@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     if (null == userinfo) {
       try {
         userinfo = oauth2.userinfo().get().execute();
-        log.debug(userinfo.toPrettyString());
+        log.debug("login user: " + userinfo.getEmail());
       } catch (IOException e) {
         userinfo = null;
         log.error(e, e);

@@ -47,7 +47,7 @@ public class AuthLogicImpl implements AuthLogic {
     GoogleClientSecrets clientSecrets;
     try {
       clientSecrets = GoogleClientSecrets.load(GoogleServiceUtil.JSON_FACTORY,
-          AuthLogicFlow.class.getResourceAsStream(CLIENT_SECRETS_FILE));
+          AuthLogicImpl.class.getResourceAsStream(CLIENT_SECRETS_FILE));
     } catch (IOException e) {
       throw new IllegalArgumentException("Failed to load client secrets from "
           + CLIENT_SECRETS_FILE, e);
@@ -253,6 +253,30 @@ public class AuthLogicImpl implements AuthLogic {
 
     credential = null;
     return false;
+  }
+
+  @Override
+  public void logout() {
+
+    String userId = getUserIdFromSession();
+    if (null == userId) {
+      /* user already logged out */
+      return;
+    }
+
+    /* reset session */
+    request.getSession().removeAttribute(SessionAttribute.USER_ID);
+    request.getSession().removeAttribute(SessionAttribute.LOGGED_IN);
+
+    /* remove credentials */
+    try {
+      credentialStore.delete(userId, credential);
+    } catch (IOException e) {
+      log.error(e, e);
+    } finally {
+      credential = null;
+    }
+
   }
 
 }
