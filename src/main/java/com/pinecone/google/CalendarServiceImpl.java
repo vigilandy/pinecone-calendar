@@ -34,13 +34,14 @@ public class CalendarServiceImpl implements CalendarService {
   @Override
   public String getOwnedCalendars() throws GoogleServiceException {
     log.info("getting owned calendars");
+
     try {
       com.google.api.services.calendar.Calendar.CalendarList.List listRequest = client
           .calendarList().list();
-      listRequest.setMinAccessRole(AccessRole.READER.toString());
+      listRequest.setMinAccessRole(AccessRole.OWNER.toString());
       CalendarList feed = listRequest.execute();
       if (log.isTraceEnabled()) {
-        log.trace(feed.toPrettyString());
+        // log.trace(feed.toPrettyString());
       }
       return feed.toString();
     } catch (IOException e) {

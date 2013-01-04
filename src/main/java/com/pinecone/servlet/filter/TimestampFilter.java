@@ -11,17 +11,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
-import org.apache.log4j.Logger;
-
 import com.pinecone.constant.RequestAttribute;
 
-/**
- * test
- */
 @WebFilter("/*")
 public class TimestampFilter implements Filter {
-
-  private static final Logger log = Logger.getLogger(TimestampFilter.class);
 
   /**
    * @see Filter#destroy()
@@ -34,16 +27,10 @@ public class TimestampFilter implements Filter {
    * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
    */
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response,
+  public void doFilter(ServletRequest req, ServletResponse resp,
       FilterChain chain) throws IOException, ServletException {
-
-    log.debug("start");
-    request.setAttribute(RequestAttribute.TIMESTAMP, new Date().toString());
-
-    // pass the request along the filter chain
-    chain.doFilter(request, response);
-
-    log.debug("end");
+    req.setAttribute(RequestAttribute.TIMESTAMP, new Date().toString());
+    chain.doFilter(req, resp);
   }
 
   /**

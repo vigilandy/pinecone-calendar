@@ -16,10 +16,16 @@ import com.pinecone.logic.AuthLogic;
 import com.pinecone.logic.AuthLogicFactory;
 
 /**
- * set the session "logged in" flag
+ * check user authentication
  */
 @WebFilter("/*")
-public class LoggedInFlagFilter implements Filter {
+public class AuthenticationFilter implements Filter {
+
+  private static void setLoggedInFlag(HttpServletRequest request) {
+    AuthLogic logic = AuthLogicFactory.get(request);
+    request.getSession().setAttribute(SessionAttribute.LOGGED_IN,
+        logic.isLoggedIn());
+  }
 
   /**
    * @see Filter#destroy()
@@ -34,15 +40,8 @@ public class LoggedInFlagFilter implements Filter {
   @Override
   public void doFilter(ServletRequest req, ServletResponse resp,
       FilterChain chain) throws IOException, ServletException {
-    HttpServletRequest request = (HttpServletRequest) req;
-
-    AuthLogic logic = AuthLogicFactory.get(request);
-    request.getSession().setAttribute(SessionAttribute.LOGGED_IN,
-        logic.isLoggedIn());
-
-    // pass the request along the filter chain
+    setLoggedInFlag((HttpServletRequest) req);
     chain.doFilter(req, resp);
-
   }
 
   /**

@@ -243,7 +243,9 @@ public class AuthLogicImpl implements AuthLogic {
     }
 
     try {
-      credential = newCredential();
+      if (null == credential) {
+        credential = newCredential();
+      }
       if (credentialStore.load(userId, credential)) {
         return true;
       }

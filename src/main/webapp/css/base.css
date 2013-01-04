@@ -1,0 +1,54 @@
+body,div {
+	margin: 0px;
+	padding: 0px;
+}
+
+body {
+	background-color: #ddd;
+}
+
+div { /* 	border: 1px dotted red; */
+	
+}
+
+.clear {
+	clear: both;
+}
+
+.hidden {
+	display: none;
+}
+
+#main_content {
+	padding: 10px;
+}
+
+#header {
+	margin-bottom: 10px;
+}
+
+#header #user_data {
+	float: right;
+}
+
+#sidebar {
+	float: left;
+	width: 150px;
+	margin-left: 20px;
+}
+
+#main_display {
+	border: 2px solid black;
+	margin-left: 200px;
+	min-width: 400px;
+}
+
+#footer {
+	padding-top: 15px;
+	color: #355;
+	font-size: .85em;
+}
+
+#footer_timestamp {
+	float: right;
+}

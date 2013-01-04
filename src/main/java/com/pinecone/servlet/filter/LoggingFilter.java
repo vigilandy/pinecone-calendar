@@ -13,7 +13,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
@@ -26,22 +25,7 @@ public class LoggingFilter implements Filter {
 
   private static final Logger log = Logger.getLogger(LoggingFilter.class);
 
-  /**
-   * @see Filter#destroy()
-   */
-  @Override
-  public void destroy() {
-  }
-
-  /**
-   * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-   */
-  @Override
-  public void doFilter(ServletRequest req, ServletResponse resp,
-      FilterChain chain) throws IOException, ServletException {
-    HttpServletRequest request = (HttpServletRequest) req;
-    HttpServletResponse response = (HttpServletResponse) resp;
-
+  private static void logRequest(HttpServletRequest request) {
     log.info("request url: " + request.getRequestURL());
     if (log.isTraceEnabled()) {
       Enumeration<String> attributeNames = request.getAttributeNames();
@@ -58,9 +42,23 @@ public class LoggingFilter implements Filter {
         }
       }
     }
+  }
 
-    // pass the request along the filter chain
-    chain.doFilter(request, response);
+  /**
+   * @see Filter#destroy()
+   */
+  @Override
+  public void destroy() {
+  }
+
+  /**
+   * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
+   */
+  @Override
+  public void doFilter(ServletRequest req, ServletResponse resp,
+      FilterChain chain) throws IOException, ServletException {
+    logRequest((HttpServletRequest) req);
+    chain.doFilter(req, resp);
   }
 
   /**
