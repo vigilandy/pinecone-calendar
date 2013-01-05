@@ -93,16 +93,12 @@ public class CalendarLogicImpl implements CalendarLogic {
     }
 
     if (hasParameter(TIME_MAX)) {
-      String timeMaxParameter = request.getParameter(TIME_MAX);
-      log.debug("timeMax=" + timeMaxParameter);
-      DateTime timeMax = new DateTime(timeMaxParameter);
+      DateTime timeMax = new DateTime(request.getParameter(TIME_MAX));
       eventsRequest.setTimeMax(timeMax);
     }
 
     if (hasParameter(TIME_MIN)) {
-      String timeMinParameter = request.getParameter(TIME_MIN);
-      log.debug("timeMin=" + timeMinParameter);
-      DateTime timeMin = new DateTime(timeMinParameter);
+      DateTime timeMin = new DateTime(request.getParameter(TIME_MIN));
       eventsRequest.setTimeMin(timeMin);
     }
 

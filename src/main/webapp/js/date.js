@@ -1,5 +1,5 @@
 $.dateStringShort = function(date) {
-	return date.getFullYear() + '/' + (date.getMonth() + 1) + '/'
+	return date.getFullYear() + '-' + (date.getMonth() + 1) + '-'
 			+ date.getDate();
 };
 
