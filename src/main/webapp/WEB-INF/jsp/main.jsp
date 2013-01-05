@@ -11,9 +11,12 @@
 <link href="css/base.css" rel="stylesheet">
 <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
-<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/date.js"></script>
 <script type="text/javascript">
 	var allCalendars = {};
+	var selectedDate = new Date();
+	var periodStart = new Date();
+	var periodEnd = new Date();
 
 	$.addToCalendarMenu = function(calendarMenu, calendar) {
 		allCalendars[calendar.id] = calendar;
@@ -58,8 +61,9 @@
 	$.displaySelectedCalendars = function() {
 
 		var selectedPanel = $('#display_tabs div.ui-tabs-panel:not(.ui-tabs-hide)');
-
 		selectedPanel.empty();
+		var selectedTabIndex = $('#display_tabs').tabs("option", "active");
+		$.createDisplayHeader(selectedTabIndex, selectedPanel);
 
 		/* get list of selected calendars */
 		$.each($('.calendar_menu_entry:checked'), function(i, entry) {
@@ -68,16 +72,27 @@
 			var content = 'calendar ' + calendar.summary + ' selected, id='
 					+ calendar.id;
 
-			$('<div>', {
-				html : content,
+			var newDiv = $('<div/>', {
+				'id' : calendar.id,
+				'class' : 'calendar_display_entry',
+				'html' : content,
 			}).appendTo(selectedPanel);
 
 			/*  get calendar data and display */
-			$.getJSON('rest/events', {
+			$.getJSON('rest/event', {
 				action : 'get',
 				id : calendar.id,
+				timeMin : periodStart.toISOString(),
+				timeMax : periodEnd.toISOString(),
 			}, function(data) {
 				$.each(data.items, function(i, event) {
+					var eventContent = event.summary + ' (' + event.start.date
+							+ ' - ' + event.start.dateTime + ')';
+					$('<div/>', {
+						'id' : event.id,
+						'class' : 'event_display_entry',
+						'html' : eventContent,
+					}).appendTo(newDiv);
 				});
 			});
 
@@ -86,7 +101,58 @@
 		$('#display_tabs').refresh;
 	};
 
+	$.createDisplayHeader = function(selectedTabIndex, selectedPanel) {
+
+		/* set periodStart and periodEnd depending on the selected tab and selectedDate */
+		/* selectedTabIndex: 0 = day, 1 = week, 2 = month */
+		periodStart = new Date(selectedDate.valueOf());
+		periodStart.setHours(0);
+		periodStart.setMinutes(0);
+		periodStart.setSeconds(0);
+		periodStart.setMilliseconds(0);
+
+		switch (selectedTabIndex) {
+		case 0:
+			periodStart.setDate(selectedDate.getDate());
+			periodEnd = new Date(periodStart.valueOf());
+			periodEnd.setDate(periodStart.getDate() + 1);
+			break;
+		case 1:
+			/* start week on monday */
+			periodStart.setDate(selectedDate.getDate()
+					+ (1 - selectedDate.getDay()));
+			periodEnd = new Date(periodStart.valueOf());
+			periodEnd.setDate(periodEnd.getDate() + 7);
+			break;
+		case 2:
+			periodStart.setDate(1);
+			periodEnd = new Date(periodStart.valueOf());
+			periodEnd.setMonth(periodStart.getMonth() + 1);
+			break;
+		}
+
+		var header = $('<div/>', {
+			'class' : 'display_header'
+		});
+		header.text($.dateTimeStringShort(periodStart) + ' ~ '
+				+ $.dateTimeStringShort(periodEnd));
+		header.appendTo(selectedPanel);
+	};
+
+	$.showCurrentTime = function() {
+		$('#current_timestamp').empty();
+		$('<span/>', {
+			'html' : new Date().toLocaleDateString()
+		}).appendTo($('#current_timestamp'));
+		$('<span/>', {
+			'html' : new Date().toLocaleTimeString()
+		}).appendTo($('#current_timestamp'));
+		setTimeout($.showCurrentTime, 500);
+	};
+
 	$(document).ready(function() {
+
+		$.showCurrentTime();
 
 		var loggedIn = $('#logged_in').val();
 		if (loggedIn != 'true') {
@@ -131,9 +197,9 @@
 	overflow: hidden;
 }
 
-.calendar {
-	margin: 1em;
-	border: 1px solid grey;
+.display_header {
+	background-color: darkgrey;
+	border: 1px solid lightgrey;
 }
 </style>
 </head>
@@ -189,7 +255,7 @@
 		<div class="clear"></div>
 
 		<div id="footer">
-			<div id="footer_timestamp">${ timestamp }</div>
+			<div id="current_timestamp"></div>
 			<div>
 				<span onclick="alert(JSON.stringify(allCalendars))">check all
 					calendars</span>

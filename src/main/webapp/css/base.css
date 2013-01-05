@@ -49,6 +49,10 @@ div { /* 	border: 1px dotted red; */
 	font-size: .85em;
 }
 
-#footer_timestamp {
+#current_timestamp {
 	float: right;
+}
+
+#current_timestamp span {
+	margin-right: 10px;
 }

@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pinecone.logic.AuthLogic;
-import com.pinecone.logic.AuthLogicFactory;
 import com.pinecone.logic.CalendarLogic;
 import com.pinecone.logic.CalendarLogicFactory;
 import com.pinecone.logic.LogicException;
