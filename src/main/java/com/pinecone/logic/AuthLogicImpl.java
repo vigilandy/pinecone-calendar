@@ -35,7 +35,7 @@ public class AuthLogicImpl implements AuthLogic {
 
   private static GoogleClientSecrets clientSecrets;
   private static CredentialStore credentialStore;
-  private static final Lock lock = new ReentrantLock();
+  private static final Lock initializationLock = new ReentrantLock();
   private static final Logger log = Logger.getLogger(AuthLogicImpl.class);
 
   private static HttpExecuteInterceptor getClientAuthentication() {
@@ -84,7 +84,7 @@ public class AuthLogicImpl implements AuthLogic {
   }
 
   private static void initialize() {
-    lock.lock();
+    initializationLock.lock();
     try {
       if (null == clientSecrets) {
         log.trace("initializing client secrets");
@@ -95,7 +95,7 @@ public class AuthLogicImpl implements AuthLogic {
         credentialStore = getCredentialStore();
       }
     } finally {
-      lock.unlock();
+      initializationLock.unlock();
     }
   }
 
@@ -136,7 +136,21 @@ public class AuthLogicImpl implements AuthLogic {
   }
 
   @Override
-  public HttpRequestInitializer getCredential() {
+  public synchronized HttpRequestInitializer getCredential() {
+    if (null == credential) {
+      String userId = getUserIdFromSession();
+      if (null != userId) {
+        try {
+          credential = newCredential();
+          if (!credentialStore.load(userId, credential)) {
+            credential = null;
+          }
+        } catch (IOException e) {
+          log.error(e, e);
+          credential = null;
+        }
+      }
+    }
     return credential;
   }
 
@@ -162,7 +176,7 @@ public class AuthLogicImpl implements AuthLogic {
     return getUserIdFromSession();
   }
 
-  private String getUserIdFromCredentials() {
+  private synchronized String getUserIdFromCredentials() {
     if (null == credential) {
       throw new IllegalArgumentException("no credentials set");
     }
@@ -176,7 +190,7 @@ public class AuthLogicImpl implements AuthLogic {
   }
 
   @Override
-  public void handleCallback(HttpServletResponse response)
+  public synchronized void handleCallback(HttpServletResponse response)
       throws AuthenticationErrorException {
 
     StringBuffer buf = request.getRequestURL();
@@ -237,28 +251,11 @@ public class AuthLogicImpl implements AuthLogic {
 
   @Override
   public boolean isLoggedIn() {
-    String userId = getUserIdFromSession();
-    if (null == userId) {
-      return false;
-    }
-
-    try {
-      if (null == credential) {
-        credential = newCredential();
-      }
-      if (credentialStore.load(userId, credential)) {
-        return true;
-      }
-    } catch (IOException e) {
-      log.error(e, e);
-    }
-
-    credential = null;
-    return false;
+    return null != getCredential();
   }
 
   @Override
-  public void logout() {
+  public synchronized void logout() {
 
     String userId = getUserIdFromSession();
     if (null == userId) {

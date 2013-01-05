@@ -32,21 +32,32 @@ public class CalendarServiceImpl implements CalendarService {
   }
 
   @Override
-  public String getOwnedCalendars() throws GoogleServiceException {
-    log.info("getting owned calendars");
+  public String getAllCalendars() throws GoogleServiceException {
+    log.info("getting all calendars");
 
     try {
       com.google.api.services.calendar.Calendar.CalendarList.List listRequest = client
           .calendarList().list();
-      listRequest.setMinAccessRole(AccessRole.OWNER.toString());
       CalendarList feed = listRequest.execute();
       if (log.isTraceEnabled()) {
-        // log.trace(feed.toPrettyString());
+        log.trace(feed.toPrettyString());
       }
       return feed.toString();
     } catch (IOException e) {
       throw new GoogleServiceException(String.format(
-          "error getting owned calendars: %s", e), e);
+          "error getting all calendars: %s", e), e);
+    }
+  }
+
+  @Override
+  public String getCalendar(final String calendarId)
+      throws GoogleServiceException {
+    log.info(String.format("getting calendar '%s'", calendarId));
+    try {
+      return client.calendars().get(calendarId).execute().toString();
+    } catch (IOException e) {
+      throw new GoogleServiceException(String.format(
+          "error getting calendar '%s': %s", calendarId, e), e);
     }
   }
 

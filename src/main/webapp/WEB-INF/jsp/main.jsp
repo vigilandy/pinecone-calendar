@@ -14,75 +14,106 @@
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript">
 	var allCalendars = {};
-	allCalendars.calendars = [];
 
-	$(function() {
-		$('#display_tabs').tabs({
-			heightStyle : "auto",
-			activate : function(event, ui) {
-				$.displayCalendar(ui.newPanel);
-			},
-		});
-	});
+	$.addToCalendarMenu = function(calendarMenu, calendar) {
+		allCalendars[calendar.id] = calendar;
 
-	$.addCalendar = function(i, item) {
-		// alert('adding calendar #' + i + ', ' + item.summary);
-		allCalendars.calendars.push(item);
-
-		var styleString = 'color: ' + item.foregroundColor
-				+ '; background-color: ' + item.backgroundColor + ';';
+		var styleString = 'color: ' + calendar.foregroundColor
+				+ '; background-color: ' + calendar.backgroundColor + ';';
 
 		var menuEntry = $('<div/>', {
 			'style' : styleString,
 			'class' : 'calendar_menu_entry_container hidden',
 		});
 
-		$('<input/>', {
+		var entryCheckbox = $('<input/>', {
 			'type' : 'checkbox',
-			'id' : item.id,
+			'id' : calendar.id,
 			'class' : 'calendar_menu_entry',
+			'onchange' : '$.displaySelectedCalendars();',
 		}).appendTo(menuEntry);
+
+		/* check the user's calendar by default */
+		if (calendar.id == $('#user_id').text()) {
+			entryCheckbox.prop('checked', true);
+		}
 
 		$('<label/>', {
-			'for' : item.id,
-			html : item.summary
+			'for' : calendar.id,
+			html : calendar.summary
 		}).appendTo(menuEntry);
 
-		menuEntry.appendTo('#my_calendar_menu').show('slow');
-
+		// 		menuEntry.insertAfter(calendarMenu).show('slow');
+		menuEntry.appendTo(calendarMenu).show('slow');
 	};
 
-	$.displayCalendar = function(displayPanel) {
-		/* the index of the display tab currently selected */
-		var activeTab = $('#display_tabs').tabs("option", "active");
-		alert('select tab: ' + activeTab);
+	$.addNewCalendarMenu = function(i, calendar) {
+		if (calendar.accessRole == 'owner') {
+			$.addToCalendarMenu($('#my_calendar_menu'), calendar);
+		} else {
+			$.addToCalendarMenu($('#other_calendar_menu'), calendar);
+		}
+	};
+
+	$.displaySelectedCalendars = function() {
+
+		var selectedPanel = $('#display_tabs div.ui-tabs-panel:not(.ui-tabs-hide)');
+
+		selectedPanel.empty();
 
 		/* get list of selected calendars */
-		// get all .calendar_menu_entry checkbox id's
 		$.each($('.calendar_menu_entry:checked'), function(i, entry) {
-			alert('checked? #' + i + ': ' + entry.id);
-			/* get calendar data and display */
-			// 			$.getJSON('rest/calendar')
+			calendar = allCalendars[entry.id];
+
+			var content = 'calendar ' + calendar.summary + ' selected, id='
+					+ calendar.id;
+
+			$('<div>', {
+				html : content,
+			}).appendTo(selectedPanel);
+
+			/*  get calendar data and display */
+			$.getJSON('rest/events', {
+				action : 'get',
+				id : calendar.id,
+			}, function(data) {
+				$.each(data.items, function(i, event) {
+				});
+			});
+
 		});
+
+		$('#display_tabs').refresh;
 	};
 
 	$(document).ready(function() {
 
 		var loggedIn = $('#logged_in').val();
-
-		if (loggedIn == 'true') {
-
-			var message = $('<span/>', {
-				'class' : 'message',
-				'html' : "loading calendars..."
-			}).appendTo('#my_calendar_menu');
-
-			$.getJSON('rest/calendar', function(data) {
-				$.each(data.items, $.addCalendar);
-				message.hide('fast').remove();
-			});
-
+		if (loggedIn != 'true') {
+			return;
 		}
+
+		$('#display_tabs').tabs({
+			heightStyle : "content",
+			activate : function(event, ui) {
+				$.displaySelectedCalendars();
+			},
+		});
+
+		/* get calenders */
+		var loadingMessage = $('<span/>', {
+			'class' : 'message',
+			'html' : "loading calendars..."
+		}).appendTo('#my_calendar_menu');
+
+		$.getJSON('rest/calendar', {
+			action : 'get',
+			id : 'all',
+		}, function(data) {
+			$.each(data.items, $.addNewCalendarMenu);
+			loadingMessage.hide('fast').remove();
+			$.displaySelectedCalendars();
+		});
 
 	});
 </script>
@@ -96,7 +127,7 @@
 }
 
 #display_tabs {
-	/* this is needed to fix a bug with the tab header height when used with a floating div nearby*/
+	/* this is needed to fix a bug with the tab header height when used with a floating div nearby */
 	overflow: hidden;
 }
 
@@ -133,14 +164,14 @@
 			<div class="clear"></div>
 		</div>
 
-		<div id="sidebar">
-			<div class="calendars_title">my calendars</div>
-			<div id="my_calendar_menu" class="calendar_menu"></div>
-			<div class="calendars_title">other calendars</div>
-			<div id="other_calendar_menu" class="calendar_menu"></div>
-		</div>
-
 		<c:if test="${ sessionScope.loggedIn }">
+			<div id="sidebar">
+				<h4>my calendars</h4>
+				<div id="my_calendar_menu"></div>
+				<h4>other calendars</h4>
+				<div id="other_calendar_menu"></div>
+			</div>
+
 			<div id="main_display">
 				<div id="display_tabs">
 					<ul>
@@ -148,15 +179,9 @@
 						<li><a href="#tabs-2">week</a></li>
 						<li><a href="#tabs-3">month</a></li>
 					</ul>
-					<div id="tabs-1">
-						<p>day display</p>
-					</div>
-					<div id="tabs-2">
-						<p>week display</p>
-					</div>
-					<div id="tabs-3">
-						<p>month display</p>
-					</div>
+					<div id="tabs-1"></div>
+					<div id="tabs-2"></div>
+					<div id="tabs-3"></div>
 				</div>
 			</div>
 		</c:if>
@@ -168,9 +193,6 @@
 			<div>
 				<span onclick="alert(JSON.stringify(allCalendars))">check all
 					calendars</span>
-			</div>
-			<div>
-				<a href="rewrite-status">rewrite status</a>
 			</div>
 		</div>
 

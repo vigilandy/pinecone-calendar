@@ -10,9 +10,10 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 
-abstract class AbstractJSONServlet extends HttpServlet {
+public abstract class AbstractRESTServlet extends HttpServlet {
 
-  private static final Logger log = Logger.getLogger(AbstractJSONServlet.class);
+  protected static final String ACTION_GET = "get";
+  private static final Logger log = Logger.getLogger(AbstractRESTServlet.class);
   private static final long serialVersionUID = 1L;
 
   private static void close(Writer writer) {
@@ -38,6 +39,12 @@ abstract class AbstractJSONServlet extends HttpServlet {
     writeJsonString(response, json);
   }
 
+  public static void writeJsonError(HttpServletResponse response, String message)
+      throws IOException {
+    response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+    writeJsonString(response, String.format("{\"error\":\"%s\"}", message));
+  }
+
   protected static void writeJsonString(HttpServletResponse response,
       String json) throws IOException {
     log.debug("writing json string: " + json);
@@ -52,12 +59,6 @@ abstract class AbstractJSONServlet extends HttpServlet {
     } finally {
       close(writer);
     }
-  }
-
-  protected void writeJsonError(HttpServletResponse response, String message)
-      throws IOException {
-    response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-    writeJsonString(response, String.format("{\"error\":\"%s\"}", message));
   }
 
 }
