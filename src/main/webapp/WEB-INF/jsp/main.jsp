@@ -10,6 +10,7 @@
 	rel="stylesheet">
 <link href="css/fullcalendar.css" rel="stylesheet">
 <link href="css/base.css" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
 <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
 <script type="text/javascript" src="js/fullcalendar.min.js"></script>
@@ -20,19 +21,15 @@
 
 		showCurrentTime();
 
+		$('#button_login, #button_logout').button();
+
 		if ('true' != $('#logged_in').val()) {
 			return;
 		}
 
 		/* debugging data */
-		if ($('#debug_data').length) {
-			$('#debug_data').remove();
-		}
 		$('.showAllCalendars').click(function() {
-			$('<div/>', {
-				'id' : 'debug_data',
-				'html' : JSON.stringify(allCalendars),
-			}).appendTo('#main_content');
+			$('#debug_data').html(JSON.stringify(allCalendars));
 		});
 
 		getCalendars();
@@ -46,19 +43,9 @@
 		$('<span/>', {
 			'html' : new Date().toLocaleTimeString()
 		}).appendTo($('#current_timestamp'));
-		setTimeout($.showCurrentTime, 500);
+		setTimeout(showCurrentTime, 500);
 	};
 </script>
-<style type="text/css">
-.calendar_menu_entry_container {
-	margin-bottom: 2px;
-}
-
-.display_calendar {
-	/* this is needed to fix a bug with the tab header height when used with a floating div nearby */
-	overflow: hidden;
-}
-</style>
 </head>
 <body>
 
@@ -71,15 +58,13 @@
 				<c:choose>
 					<c:when test="${ sessionScope.loggedIn }">
 						<span id="user_id">${ sessionScope.userId }</span>
-						<a id="button_logout" href="logout"
-							class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-							<span class="ui-button-text">logout</span>
+						<a id="button_logout" href="logout"> <span
+							class="ui-button-text">logout</span>
 						</a>
 					</c:when>
 					<c:otherwise>
-						<a id="button_login" href="login"
-							class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-							<span class="ui-button-text">login</span>
+						<a id="button_login" href="login"> <span
+							class="ui-button-text">login</span>
 						</a>
 					</c:otherwise>
 				</c:choose>
@@ -96,7 +81,23 @@
 			</div>
 
 			<div id="main_display">
-				<div id="calendars"></div>
+				<div id="calendar_display">
+					<div id="display_header">
+						<div id="calendar_navigation">
+							<div id="calendar_navigation_today">today</div>
+							<div id="calendar_navigation_prev">prev</div>
+							<div id="calendar_navigation_next">next</div>
+						</div>
+						<div id="display_period">
+							<input type="radio" id="display_period_day" name="display_period"
+								checked="checked"><label for="display_period_day">day</label>
+							<input type="radio" id="display_period_week"
+								name="display_period"><label for="display_period_week">week</label>
+						</div>
+						<div id="display_title"></div>
+					</div>
+					<table id="calendar_body"></table>
+				</div>
 			</div>
 		</c:if>
 
@@ -108,6 +109,8 @@
 				<span class="showAllCalendars">check all calendars</span>
 			</div>
 		</div>
+
+		<div id="debug_data"></div>
 
 	</div>
 

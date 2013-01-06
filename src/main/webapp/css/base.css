@@ -7,8 +7,12 @@ body {
 	background-color: #ddd;
 }
 
-div { /* 	border: 1px dotted red; */
-	
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
 }
 
 .clear {

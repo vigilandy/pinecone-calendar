@@ -1,0 +1,33 @@
+.calendar_menu_entry_container {
+	margin-bottom: 2px;
+}
+
+#calendar_display {
+	
+}
+
+#display_header {
+	overflow: hidden;
+	width: 100%;
+}
+
+#calendar_navigation {
+	float: left;
+}
+
+#display_period {
+	float: right;
+}
+
+#display_title {
+	text-align: center;
+	font-size: 1.3em;
+}
+
+#calendar_display table#calendar_body tr td { /*display: table;*/
+	border: thin solid #666;
+}
+
+#calendar_display table {
+	width: 100%;
+}

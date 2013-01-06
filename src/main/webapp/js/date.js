@@ -1,20 +1,24 @@
-$.dateStringShort = function(date) {
-	return date.getFullYear() + '-' + (date.getMonth() + 1) + '-'
-			+ date.getDate();
+var dateStringShort = function(date) {
+	var y = date.getFullYear();
+	var m = padZero(date.getMonth() + 1);
+	var d = padZero(date.getDate());
+
+	return y + '-' + m + '-' + d;
 };
 
-$.timeString = function(date) {
-	var h = date.getHours();
-	var m = date.getMinutes();
-	if (h < 10) {
-		h = '0' + h;
-	}
-	if (m < 10) {
-		m = '0' + m;
-	}
+var timeString = function(date) {
+	var h = padZero(date.getHours());
+	var m = padZero(date.getMinutes());
+
 	return h + ':' + m;
 };
 
-$.dateTimeStringShort = function(date) {
+var dateTimeStringShort = function(date) {
 	return $.dateStringShort(date) + ' ' + $.timeString(date);
+};
+
+var padZero = function(value) {
+	if (value < 10) {
+		return '0' + value;
+	}
 };
