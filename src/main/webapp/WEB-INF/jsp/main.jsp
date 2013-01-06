@@ -96,7 +96,7 @@
 						<div id="display_title"></div>
 					</div>
 					<table id="calendar_body">
-						<col style="width: 0;">
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>

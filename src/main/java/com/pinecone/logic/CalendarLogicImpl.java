@@ -45,9 +45,9 @@ public class CalendarLogicImpl implements CalendarLogic {
   @Override
   public String getCalendar(String calendarId) throws LogicException {
     try {
-      com.google.api.services.calendar.model.Calendar c = getClient()
+      com.google.api.services.calendar.model.Calendar calendarData = getClient()
           .calendars().get(calendarId).execute();
-      return c.toString();
+      return calendarData.toString();
     } catch (IOException e) {
       throw new LogicException(e);
     }

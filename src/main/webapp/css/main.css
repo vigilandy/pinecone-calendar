@@ -28,6 +28,10 @@
 	border: thin solid #666;
 }
 
+.display_row_label {
+	width: 20%;
+}
+
 #calendar_display table {
 	width: 100%;
 }

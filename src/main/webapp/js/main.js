@@ -58,12 +58,12 @@ var displaySelectedCalendars = function() {
 	$.each($('.calendar_menu_entry:checked'),
 			function(i, entry) {
 				var calendar = allCalendars[entry.id];
-
-				var calendarDisplay = $('#'
-						+ escapeSelector('calendar_' + calendar.id));
 				var eventContainerId = 'events_'
 						+ dateStringShort(selectedDate) + '_' + calendar.id;
 				var eventContainerClass = 'events_' + calendar.id;
+
+				var calendarDisplay = $('#'
+						+ escapeSelector('calendar_' + calendar.id));
 				if (!calendarDisplay.length) {
 					var styleString = 'color: ' + calendar.foregroundColor
 							+ '; background-color: ' + calendar.backgroundColor
@@ -71,8 +71,9 @@ var displaySelectedCalendars = function() {
 
 					var row = $('<tr>', {
 						id : 'calendar_' + calendar.id
-					}).appendTo($('#calendar_body'));
+					}).appendTo($('#calendar_body tbody'));
 					$('<td/>', {
+						'class' : 'display_row_label',
 						style : styleString,
 					}).appendTo(row).append($('<span/>', {
 						html : calendar.summary,
@@ -89,8 +90,11 @@ var displaySelectedCalendars = function() {
 						.append($('<div/>', {
 							id : eventContainerId,
 							'class' : eventContainerClass,
-							html : 'loading event data...',
-						}));
+						}).append($('<img/>', {
+							'class' : 'loading',
+							src : 'img/ajax-loader.gif',
+							alt : 'loading event data...',
+						})));
 
 				/* get calendar data and display */
 				$.getJSON('rest/event', {
@@ -180,6 +184,12 @@ var createHeader = function() {
 };
 
 var createBody = function() {
+	$('#calendar_body tbody').sortable({
+		containment : "parent",
+		cursor : "move",
+		opacity : 0.5,
+		revert : true,
+	});
 };
 
 var updateDisplayTitle = function(periodType) {
