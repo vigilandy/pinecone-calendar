@@ -12,26 +12,51 @@
 <link href="css/base.css" rel="stylesheet">
 <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
-<script type="text/javascript" src="js/fullcalendar.js"></script>
+<script type="text/javascript" src="js/fullcalendar.min.js"></script>
 <script type="text/javascript" src="js/date.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
-<style type="text/css">
-#my_calendar_menu {
-	
-}
+<script type="text/javascript">
+	$(document).ready(function() {
 
+		showCurrentTime();
+
+		if ('true' != $('#logged_in').val()) {
+			return;
+		}
+
+		/* debugging data */
+		if ($('#debug_data').length) {
+			$('#debug_data').remove();
+		}
+		$('.showAllCalendars').click(function() {
+			$('<div/>', {
+				'id' : 'debug_data',
+				'html' : JSON.stringify(allCalendars),
+			}).appendTo('#main_content');
+		});
+
+		getCalendars();
+	});
+
+	var showCurrentTime = function() {
+		$('#current_timestamp').empty();
+		$('<span/>', {
+			'html' : new Date().toLocaleDateString()
+		}).appendTo($('#current_timestamp'));
+		$('<span/>', {
+			'html' : new Date().toLocaleTimeString()
+		}).appendTo($('#current_timestamp'));
+		setTimeout($.showCurrentTime, 500);
+	};
+</script>
+<style type="text/css">
 .calendar_menu_entry_container {
 	margin-bottom: 2px;
 }
 
-#display_tabs {
+.display_calendar {
 	/* this is needed to fix a bug with the tab header height when used with a floating div nearby */
 	overflow: hidden;
-}
-
-.display_header {
-	background-color: darkgrey;
-	border: 1px solid lightgrey;
 }
 </style>
 </head>
@@ -71,16 +96,7 @@
 			</div>
 
 			<div id="main_display">
-				<div id="display_tabs">
-					<ul>
-						<li><a href="#tabs-1">day</a></li>
-						<li><a href="#tabs-2">week</a></li>
-						<li><a href="#tabs-3">month</a></li>
-					</ul>
-					<div id="tabs-1"></div>
-					<div id="tabs-2"></div>
-					<div id="tabs-3"></div>
-				</div>
+				<div id="calendars"></div>
 			</div>
 		</c:if>
 
