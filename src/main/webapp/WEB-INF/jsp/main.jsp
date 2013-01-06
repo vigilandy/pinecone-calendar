@@ -8,12 +8,10 @@
 <title>Pinecone</title>
 <link href="css/ui-lightness/jquery-ui-1.9.2.custom.min.css"
 	rel="stylesheet">
-<link href="css/fullcalendar.css" rel="stylesheet">
 <link href="css/base.css" rel="stylesheet">
 <link href="css/main.css" rel="stylesheet">
 <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
-<script type="text/javascript" src="js/fullcalendar.min.js"></script>
 <script type="text/javascript" src="js/date.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript">
@@ -90,13 +88,16 @@
 						</div>
 						<div id="display_period">
 							<input type="radio" id="display_period_day" name="display_period"
-								checked="checked"><label for="display_period_day">day</label>
-							<input type="radio" id="display_period_week"
-								name="display_period"><label for="display_period_week">week</label>
+								checked="checked" value="day"><label
+								for="display_period_day">day</label> <input type="radio"
+								id="display_period_week" name="display_period" value="week"><label
+								for="display_period_week">week</label>
 						</div>
 						<div id="display_title"></div>
 					</div>
-					<table id="calendar_body"></table>
+					<table id="calendar_body">
+						<col style="width: 0;">
+					</table>
 				</div>
 			</div>
 		</c:if>

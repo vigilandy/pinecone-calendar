@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
@@ -16,7 +14,8 @@ import com.pinecone.google.CalendarClientFactory;
 
 public class CalendarLogicImpl implements CalendarLogic {
 
-  private static final Logger log = Logger.getLogger(CalendarLogicImpl.class);
+  // private static final Logger log =
+  // Logger.getLogger(CalendarLogicImpl.class);
   private static final String NEXT_PAGE_TOKEN = "nextPageToken";
   private static final String TIME_MAX = "timeMax";
   private static final String TIME_MIN = "timeMin";
