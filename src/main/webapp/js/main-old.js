@@ -170,7 +170,6 @@ var calendarDisplay = {
 };
 
 $(function() {
-
 	$('#button_login, #button_logout').button();
 	if ('true' != $('#logged_in').val()) {
 		return;

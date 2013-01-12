@@ -1,0 +1,20 @@
+#display_header {
+	overflow: hidden;
+	width: 100%;
+}
+
+#calendar_navigation {
+	float: left;
+}
+
+#calendar_timeframe {
+	float: right;
+}
+
+#selected_date_display {
+	
+}
+
+.calendar_menu_entry_container {
+	margin-bottom: 2px;
+}
