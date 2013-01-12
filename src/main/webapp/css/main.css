@@ -24,7 +24,7 @@
 	font-size: 1.3em;
 }
 
-#calendar_display table#calendar_body tr td { /*display: table;*/
+#calendar_display table#display_body tr td { /*display: table;*/
 	border: thin solid #666;
 }
 

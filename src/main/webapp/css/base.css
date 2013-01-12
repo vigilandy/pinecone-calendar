@@ -52,11 +52,3 @@ body {
 	color: #355;
 	font-size: .85em;
 }
-
-#current_timestamp {
-	float: right;
-}
-
-#current_timestamp span {
-	margin-right: 10px;
-}
