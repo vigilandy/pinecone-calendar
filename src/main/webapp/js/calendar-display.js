@@ -1,4 +1,4 @@
-var CalendarDisplay = function(mainDisplay, calendarMenu) {
+function CalendarDisplay(mainDisplay, calendarMenu) {
 
   var self = this;
 
@@ -8,6 +8,8 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
     start : new Date(),
     end : new Date(),
   };
+  this.startHour = 7;
+  this.endHour = 20;
 
   this.addToCalendarMenu = function(calendar) {
     this.allCalendars[calendar.id] = calendar;
@@ -15,12 +17,12 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
     var styleString = 'color: ' + calendar.foregroundColor
         + '; background-color: ' + calendar.backgroundColor + ';';
 
-    var menuEntry = $('<div/>', {
+    var menuEntry = $('<div>', {
       'style' : styleString,
       'class' : 'calendar_menu_entry_container hidden',
     });
 
-    var entryCheckbox = $('<input/>', {
+    var entryCheckbox = $('<input>', {
       'type' : 'checkbox',
       'id' : calendar.id,
       'class' : 'calendar_menu_entry',
@@ -31,7 +33,7 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
       entryCheckbox.prop('checked', true);
     }
 
-    $('<label/>', {
+    $('<label>', {
       'for' : calendar.id,
       html : calendar.summary
     }).appendTo(menuEntry);
@@ -39,16 +41,30 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
     menuEntry.appendTo(calendarMenu).show('slow');
   };
 
-  this.createEventContainers = function(calendar) {
-    // TODO
-
-    /* delete previous event containers */
-    // var eventContainerClass = 'events_' + calendarId;
-    // $('.' + escapeSelector(eventContainerClass)).parent().remove();
-  };
-
   this.displayEvent = function(calendarId, event) {
     // TODO
+    var calendarRowId = 'calendar_' + calendarId;
+    var timeContainer;
+
+    if (self.isAllDayEvent(event)) {
+      timeContainer = $('#' + escapeSelector(calendarRowId) + '_top td.'
+          + event.start.date + '_all_day');
+    } else {
+      var eventDate = event.start.dateTime.substring(0, 10);
+      var eventHour = event.start.dateTime.substring(11, 13);
+      timeContainer = $('#' + escapeSelector(calendarRowId) + '_bottom td.'
+          + eventDate + '_' + eventHour);
+      timeContainer.find('span').remove();
+    }
+
+    if (timeContainer.length) {
+      timeContainer.find('span').remove();
+      timeContainer.append($('<div>', {
+        'class' : 'event_entry',
+        text : event.summary
+      })).show();
+    }
+
   };
 
   this.getSelectedTimeframe = function() {
@@ -62,9 +78,8 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
 
   this.initialize = function() {
 
-    this.setupDisplayHeader();
-    this.setupDisplayBody();
-    this.setupCalendarMenu();
+    this.createDisplayHeader();
+    this.createDisplayTable();
     this.initializeCalendarData();
 
   };
@@ -78,18 +93,19 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
       $.each(data.items, function(i, calendar) {
         self.addToCalendarMenu(calendar);
       });
-
       self.updateCalendarData();
     });
 
   };
 
+  this.isAllDayEvent = function(event) {
+    return null != event.start.date;
+  };
+
   this.setSelectedDate = function(newDate) {
 
     if (null != this.selectedDate
-        && dateStringShort(this.selectedDate) == dateStringShort(newDate)) {
-      return;
-    }
+        && dateStringShort(this.selectedDate) == dateStringShort(newDate)) { return; }
 
     this.selectedDate = newDate;
     this.updateTimeframe();
@@ -97,124 +113,60 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
 
   };
 
-  this.setupCalendarMenu = function() {
+  this.createDisplayTable = function() {
+
+    var tableHeaderRow = $('#display_table thead tr');
+
+    for ( var hour = self.startHour; hour <= self.endHour; hour++) {
+      $('<td>', {
+        text : hour + ':00',
+      }).appendTo(tableHeaderRow);
+    }
+
   };
 
-  this.setupCalendarNavigation = function() {
-    var navDiv = $('<div>', {
-      id : 'calendar_navigation'
-    }).appendTo(displayHeader);
+  this.createDisplayHeader = function() {
 
-    $('<a>', {
-      text : 'today',
-      'class' : 'button_calendar_navigation',
-      title : dateStringShort(new Date()),
-    }).button().click(function() {
-      self.moveSelectedDate('today');
-    }).tooltip().appendTo(navDiv);
+    $('.button_calendar_navigation').button();
 
-    $('<a>', {
-      text : 'prev',
-      'class' : 'button_calendar_navigation',
-    }).button({
-      icons : {
-        primary : 'ui-icon-circle-triangle-w',
-      },
-      text : false,
-    }).click(function() {
+    /* today */
+    $('#calendar_navigation_today').attr('title', dateStringShort(new Date()))
+        .click(function() {
+          self.moveSelectedDate('today');
+        }).tooltip();
+
+    /* previous */
+    $('#calendar_navigation_prev').button('option', 'icons', {
+      primary : 'ui-icon-circle-triangle-w'
+    }).button("option", "text", false).click(function() {
       self.moveSelectedDate('prev');
-    }).appendTo(navDiv);
+    }).tooltip();
 
-    $('<input>', {
-      type : 'text',
-      id : 'selected_date_display',
-      'class' : 'button_calendar_navigation',
-      readonly : 'readonly',
-    }).change(function() {
-      self.setSelectedDate($('#selected_date_display').datepicker('getDate'));
-    }).datepicker({
+    /* selected date */
+    $('#selected_date_display').datepicker({
       dateFormat : 'yy-mm-dd',
       showOtherMonths : true,
       selectOtherMonths : true,
       showAnim : 'fold',
-    }).button().appendTo(navDiv);
+    }).change(function() {
+      self.setSelectedDate($('#selected_date_display').datepicker('getDate'));
+      self.updateCalendarData();
+    });
 
-    $('<a>', {
-      text : 'next',
-      'class' : 'button_calendar_navigation',
-    }).button({
-      icons : {
-        primary : 'ui-icon-circle-triangle-e',
-      },
-      text : false,
-    }).click(function() {
+    /* next */
+    $('#calendar_navigation_next').button('option', 'icons', {
+      primary : 'ui-icon-circle-triangle-e'
+    }).button("option", "text", false).click(function() {
       self.moveSelectedDate('next');
-    }).appendTo(navDiv);
-  };
+    }).tooltip();
 
-  this.setupDisplayBody = function() {
-    displayBody = $('<div>', {
-      id : 'display_body',
-    }).appendTo(mainDisplay);
-    // TODO
-  };
+    /* time frame button set */
+    $('#calendar_timeframe').buttonset();
 
-  this.setupDisplayHeader = function() {
-    displayHeader = $('<div>', {
-      id : 'display_header',
-    }).appendTo(mainDisplay);
-    this.setupCalendarNavigation();
-    this.setupDisplayTimeframe();
+    /* disable week, month */
+    $('#display_period_week,#display_period_month').button('disable');
+
     this.setSelectedDate(new Date());
-  };
-
-  this.setupDisplayTimeframe = function() {
-
-    var timeframeDiv = $('<div>', {
-      id : 'calendar_timeframe'
-    }).appendTo(displayHeader);
-
-    $('<input>', {
-      id : 'display_period_day',
-      name : 'display_timeframe',
-      type : 'radio',
-      checked : 'checked',
-      value : 'day'
-    }).appendTo(timeframeDiv);
-
-    $('<label>', {
-      'for' : 'display_period_day',
-      text : 'day',
-    }).appendTo(timeframeDiv);
-
-    $('<input>', {
-      id : 'display_period_week',
-      name : 'display_timeframe',
-      type : 'radio',
-      value : 'week',
-    // disabled : 'disabled',
-    }).appendTo(timeframeDiv);
-
-    $('<label>', {
-      'for' : 'display_period_week',
-      text : 'week',
-    }).appendTo(timeframeDiv);
-
-    $('<input>', {
-      id : 'display_period_month',
-      name : 'display_timeframe',
-      type : 'radio',
-      value : 'month',
-    // disabled : 'disabled',
-    }).appendTo(timeframeDiv);
-
-    $('<label>', {
-      'for' : 'display_period_month',
-      text : 'month',
-    }).appendTo(timeframeDiv);
-
-    timeframeDiv.buttonset();
-
   };
 
   this.updateDisplayTitle = function() {
@@ -226,9 +178,7 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
     var direction = 0;
     switch (moveType) {
       case 'today':
-        if (dateStringShort(this.selectedDate) == dateStringShort(new Date())) {
-          return;
-        }
+        if (dateStringShort(this.selectedDate) == dateStringShort(new Date())) { return; }
         this.selectedDate = new Date();
         direction = 0;
         break;
@@ -262,55 +212,83 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
 
   this.updateCalendarData = function() {
     // TODO
+    // return;
 
     /* remove non-selected calendars */
     $.each($(".calendar_menu_entry:not(:checked)"), function(i, entry) {
       var calendar = self.allCalendars[entry.id];
-      var calendarDisplay = $('#' + escapeSelector('calendar_' + calendar.id));
-      if (calendarDisplay.length) {
-        calendarDisplay.hide('slow').promise().done(function() {
-          this.remove();
-        });
-      }
+
+      $('[id^="' + 'calendar_' + calendar.id + '_"]').hide('slow').promise()
+          .done(function() {
+            this.remove();
+          });
+
     });
 
     /* add selected calendars */
     $.each($('.calendar_menu_entry:checked'), function(i, entry) {
       var calendar = self.allCalendars[entry.id];
-      var calendarDisplay = $('#' + escapeSelector('calendar_' + calendar.id));
-      if (!calendarDisplay.length) {
-        var styleString = 'color: ' + calendar.foregroundColor
-            + '; background-color: ' + calendar.backgroundColor + ';';
 
-        var row = $('<div>', {
-          id : 'calendar_' + calendar.id,
-          'class' : 'display_row hidden',
-        }).appendTo($('#display_body'));
-        $('<div>', {
-          'class' : 'display_row_label',
-          style : styleString,
-        }).appendTo(row).append($('<span/>', {
-          html : calendar.summary,
-        }));
-        row.show('slow');
-      }
+      /* redraw calendar row, this should be optimized at some point */
+      $('[id^="' + 'calendar_' + calendar.id + '_"]').empty().remove();
+
+      var styleString = 'color: ' + calendar.foregroundColor
+          + '; background-color: ' + calendar.backgroundColor + ';';
+
+      var topRow = $('<tr>', {
+        id : 'calendar_' + calendar.id + '_top',
+        'class' : 'display_row display_row_top',
+      }).appendTo($('#display_table tbody'));
+      $('<td>', {
+        'class' : 'display_row_label',
+        style : styleString,
+        rowspan : '2',
+      }).appendTo(topRow).append($('<span>', {
+        html : calendar.summary,
+      }));
 
       /* create new event container(s) */
-      // self.createEventContainers(calendar);
+      switch (self.getSelectedTimeframe()) {
+        case 'day':
+          var dateString = dateStringShort(self.selectedDate);
+          $('<td>', {
+            'class' : dateString + '_all_day',
+            colspan : self.endHour - self.startHour + 1,
+            html : '<span>&nbsp;</span>',
+          }).appendTo(topRow);
+
+          var bottomRow = $('<tr>', {
+            id : 'calendar_' + calendar.id + '_bottom',
+            'class' : 'display_row display_row_bottom',
+          }).appendTo($('#display_table tbody'));
+          for ( var hour = self.startHour; hour <= self.endHour; hour++) {
+            $('<td>', {
+              'class' : dateString + '_' + hour + ' timeslot',
+              html : '<span>&nbsp;</span>',
+            }).appendTo(bottomRow);
+          }
+          break;
+        case 'week':
+          // TODO
+          break;
+        case 'month':
+          // TODO
+          break;
+      }
+
       /* get calendar data and display */
-      // $.getJSON('rest/event', {
-      // action : 'get',
-      // id : calendar.id,
-      // timeMin : self.timeframe.start.toISOString(),
-      // timeMax : self.timeframe.end.toISOString(),
-      // }, function(data) {
-      // $('#' + escapeSelector(eventContainerId)).empty();
-      // if (data.items) {
-      // $.each(data.items, function(i, event) {
-      // self.displayEvent(calendar.id, event);
-      // });
-      // }
-      // });
+      $.getJSON('rest/event', {
+        action : 'get',
+        id : calendar.id,
+        timeMin : self.timeframe.start.toISOString(),
+        timeMax : self.timeframe.end.toISOString(),
+      }, function(data) {
+        if (data.items) {
+          $.each(data.items, function(i, event) {
+            self.displayEvent(calendar.id, event);
+          });
+        }
+      });
     });
 
   };
@@ -350,9 +328,7 @@ var CalendarDisplay = function(mainDisplay, calendarMenu) {
 
 };
 
-var escapeSelector = function(str) {
-  if (str)
-    return str.replace(/([ #;&,.+*~\':"!^$[\]()=>|\/@])/g, '\\$1');
-  else
-    return str;
+function escapeSelector(str) {
+  if (str) return str.replace(/([ #;&,.+*~\':"!^$[\]()=>|\/@])/g, '\\$1');
+  else return str;
 };
