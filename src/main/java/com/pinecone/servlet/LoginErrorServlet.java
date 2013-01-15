@@ -22,7 +22,7 @@ public class LoginErrorServlet extends HttpServlet {
       throws ServletException, IOException {
 
     request.setAttribute(RequestAttribute.MESSAGE, "login error");
-    request.getRequestDispatcher(JspPage.MAIN).forward(request, response);
+    request.getRequestDispatcher(JspPage.ERROR).forward(request, response);
 
   }
 

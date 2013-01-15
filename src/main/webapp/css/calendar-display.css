@@ -1,0 +1,53 @@
+.calendar_menu_entry_container {
+	margin-bottom: 2px;
+}
+
+#display_header {
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+#calendar_navigation {
+	float: left;
+}
+
+#calendar_timeframe {
+	float: right;
+}
+
+#display_body {
+	width: 100%;
+	overflow: auto;
+}
+
+#display_table {
+	border-collapse: collapse;
+	background-color: white;
+}
+
+#display_table  tr.display_row_bottom {
+	border-bottom: 1px solid black;
+}
+
+#display_table  tr.display_row_top {
+	border-top: 1px solid black;
+}
+
+#display_table td {
+	border: 1px dotted grey;
+}
+
+#display_table thead td,#display_table td.display_row_label {
+	padding: 5px;
+}
+
+td.timeslot {
+	min-height: 1em;
+}
+
+.event_entry {
+	border-radius: 3px;
+	/* 	white-space: nowrap; */
+	padding: .2em;
+	background-color: lightblue;
+}

@@ -7,6 +7,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import com.pinecone.logic.CalendarLogic;
 import com.pinecone.logic.CalendarLogicFactory;
 import com.pinecone.logic.LogicException;
@@ -14,6 +16,7 @@ import com.pinecone.logic.LogicException;
 @WebServlet("/rest/event")
 public class EventRESTServlet extends AbstractRESTServlet {
 
+  private static final Logger log = Logger.getLogger(EventRESTServlet.class);
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -37,6 +40,7 @@ public class EventRESTServlet extends AbstractRESTServlet {
         }
       } catch (LogicException e) {
 
+        log.error(e, e);
         writeJsonError(response, e.toString());
 
       }
@@ -49,5 +53,4 @@ public class EventRESTServlet extends AbstractRESTServlet {
     }
 
   }
-
 }

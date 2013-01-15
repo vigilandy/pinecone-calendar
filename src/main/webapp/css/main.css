@@ -1,37 +1,33 @@
-.calendar_menu_entry_container {
-	margin-bottom: 2px;
+body,div {
+	margin: 0px;
+	padding: 0px;
 }
 
-#calendar_display {
-	
-}
-
-#display_header {
+#main_content {
+	padding: 10px;
 	overflow: hidden;
-	width: 100%;
 }
 
-#calendar_navigation {
-	float: left;
+#header {
+	margin-bottom: 10px;
+	overflow: hidden;
 }
 
-#display_period {
+#header #user_data {
 	float: right;
 }
 
-#display_title {
-	text-align: center;
-	font-size: 1.3em;
+#sidebar {
+	float: left;
+	width: 150px;
+	margin-left: 20px;
 }
 
-#calendar_display table#calendar_body tr td { /*display: table;*/
-	border: thin solid #666;
+#main_display {
+	margin-left: 200px;
+	min-width: 400px;
 }
 
-.display_row_label {
-	width: 20%;
-}
-
-#calendar_display table {
-	width: 100%;
+.hidden {
+	display: none;
 }

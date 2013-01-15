@@ -14,7 +14,7 @@ var timeString = function(date) {
 };
 
 var dateTimeStringShort = function(date) {
-	return $.dateStringShort(date) + ' ' + $.timeString(date);
+	return dateStringShort(date) + ' ' + timeString(date);
 };
 
 var padZero = function(value) {
