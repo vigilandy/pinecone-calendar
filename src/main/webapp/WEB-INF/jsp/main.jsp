@@ -5,12 +5,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Pinecone</title>
-<link href="css/pepper-grinder/jquery-ui-1.9.2.custom.min.css"
-  rel="stylesheet">
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/pepper-grinder/jquery-ui.css" type="text/css" rel="Stylesheet" />
 <link href="css/calendar-display.css" rel="stylesheet">
 <link href="css/main.css" rel="stylesheet">
-<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/date.js"></script>
 <script type="text/javascript" src="js/calendar-display.js"></script>
 <script type="text/javascript">
