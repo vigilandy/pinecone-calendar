@@ -16,13 +16,13 @@
 }
 
 #display_body {
-	width: 100%;
 	overflow: auto;
 }
 
 #display_table {
 	border-collapse: collapse;
 	background-color: white;
+	table-layout: fixed;
 }
 
 #display_table  tr.display_row_bottom {
@@ -33,8 +33,13 @@
 	border-top: 1px solid black;
 }
 
+#display_table td.timeslot_header {
+	text-align: center;
+}
+
 #display_table td {
-	border: 1px dotted grey;
+	vertical-align: top;
+	border-right: 1px dotted grey;
 }
 
 #display_table thead td,#display_table td.display_row_label {
@@ -43,11 +48,18 @@
 
 td.timeslot {
 	min-height: 1em;
+	min-width: 100px;
+	max-width: 100px;
+	overflow: visible;
 }
 
 .event_entry {
+	width: 100%;
 	border-radius: 3px;
-	/* 	white-space: nowrap; */
 	padding: .2em;
+	margin-bottom: .2em;
 	background-color: lightblue;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

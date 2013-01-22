@@ -10,6 +10,7 @@ function CalendarDisplay(mainDisplay, calendarMenu) {
   };
   this.startHour = 7;
   this.endHour = 20;
+  this.timeslotWidth=100;
 
   this.addToCalendarMenu = function(calendar) {
     this.allCalendars[calendar.id] = calendar;
@@ -50,6 +51,7 @@ function CalendarDisplay(mainDisplay, calendarMenu) {
       timeContainer = $('#' + escapeSelector(calendarRowId) + '_top td.'
           + event.start.date + '_all_day');
     } else {
+      var ;
       var eventDate = event.start.dateTime.substring(0, 10);
       var eventHour = event.start.dateTime.substring(11, 13);
       timeContainer = $('#' + escapeSelector(calendarRowId) + '_bottom td.'
@@ -58,11 +60,20 @@ function CalendarDisplay(mainDisplay, calendarMenu) {
     }
 
     if (timeContainer.length) {
-      timeContainer.find('span').remove();
-      timeContainer.append($('<div>', {
+
+      var eventDiv = $('<div>', {
         'class' : 'event_entry',
-        text : event.summary
-      })).show();
+        text : event.summary,
+      });
+
+      timeContainer.find('span').remove();
+      timeContainer.append(eventDiv).show();
+
+      if (!self.isAllDayEvent(event)) {
+        var eventDuration='';
+        eventDiv.css('width', '300px');
+        // eventDiv.css('position', 'absolute');
+      }
     }
 
   };
@@ -119,6 +130,7 @@ function CalendarDisplay(mainDisplay, calendarMenu) {
 
     for ( var hour = self.startHour; hour <= self.endHour; hour++) {
       $('<td>', {
+        'class' : 'timeslot_header',
         text : hour + ':00',
       }).appendTo(tableHeaderRow);
     }
